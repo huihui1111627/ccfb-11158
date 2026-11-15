@@ -1,0 +1,1 @@
+fn(State<Arc<AppState>>, Query<Filter>) -> impl Future<Output = Result<Response<Body>, (StatusCode, Json<serde_json::Value>)>> {api_export_vcf}

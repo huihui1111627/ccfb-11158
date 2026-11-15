@@ -1,0 +1,14 @@
+/Users/shizhihui/ccfb/runs/11158/workspace/variantdb/target/release/deps/serde-b5199e797d10f330.d: /Users/shizhihui/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/serde-1.0.229/src/lib.rs /Users/shizhihui/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/serde-1.0.229/src/integer128.rs /Users/shizhihui/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/serde-1.0.229/src/private/mod.rs /Users/shizhihui/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/serde-1.0.229/src/private/de.rs /Users/shizhihui/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/serde-1.0.229/src/private/ser.rs /Users/shizhihui/ccfb/runs/11158/workspace/variantdb/target/release/build/serde-8588ffbd32d71a77/out/private.rs
+
+/Users/shizhihui/ccfb/runs/11158/workspace/variantdb/target/release/deps/libserde-b5199e797d10f330.rlib: /Users/shizhihui/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/serde-1.0.229/src/lib.rs /Users/shizhihui/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/serde-1.0.229/src/integer128.rs /Users/shizhihui/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/serde-1.0.229/src/private/mod.rs /Users/shizhihui/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/serde-1.0.229/src/private/de.rs /Users/shizhihui/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/serde-1.0.229/src/private/ser.rs /Users/shizhihui/ccfb/runs/11158/workspace/variantdb/target/release/build/serde-8588ffbd32d71a77/out/private.rs
+
+/Users/shizhihui/ccfb/runs/11158/workspace/variantdb/target/release/deps/libserde-b5199e797d10f330.rmeta: /Users/shizhihui/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/serde-1.0.229/src/lib.rs /Users/shizhihui/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/serde-1.0.229/src/integer128.rs /Users/shizhihui/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/serde-1.0.229/src/private/mod.rs /Users/shizhihui/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/serde-1.0.229/src/private/de.rs /Users/shizhihui/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/serde-1.0.229/src/private/ser.rs /Users/shizhihui/ccfb/runs/11158/workspace/variantdb/target/release/build/serde-8588ffbd32d71a77/out/private.rs
+
+/Users/shizhihui/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/serde-1.0.229/src/lib.rs:
+/Users/shizhihui/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/serde-1.0.229/src/integer128.rs:
+/Users/shizhihui/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/serde-1.0.229/src/private/mod.rs:
+/Users/shizhihui/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/serde-1.0.229/src/private/de.rs:
+/Users/shizhihui/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/serde-1.0.229/src/private/ser.rs:
+/Users/shizhihui/ccfb/runs/11158/workspace/variantdb/target/release/build/serde-8588ffbd32d71a77/out/private.rs:
+
+# env-dep:OUT_DIR=/Users/shizhihui/ccfb/runs/11158/workspace/variantdb/target/release/build/serde-8588ffbd32d71a77/out

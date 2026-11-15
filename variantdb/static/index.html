@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<title>变异位点库</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, "PingFang SC", sans-serif; margin: 0; background: #f4f6f8; color: #222; }
+  header { background: #1f3a5f; color: #fff; padding: 12px 24px; display: flex; align-items: baseline; gap: 24px; }
+  header h1 { font-size: 18px; margin: 0; }
+  #stats { font-size: 13px; opacity: .85; }
+  nav { background: #fff; border-bottom: 1px solid #ddd; padding: 0 24px; display: flex; }
+  nav button { border: none; background: none; padding: 12px 18px; font-size: 14px; cursor: pointer; border-bottom: 2px solid transparent; }
+  nav button.active { border-bottom-color: #1f3a5f; font-weight: 600; color: #1f3a5f; }
+  main { padding: 20px 24px; }
+  .page { display: none; }
+  .page.active { display: block; }
+  .card { background: #fff; border: 1px solid #e2e6ea; border-radius: 6px; padding: 16px; margin-bottom: 16px; }
+  label { font-size: 13px; color: #555; margin-right: 4px; }
+  input, select { padding: 5px 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; margin: 2px 8px 2px 0; }
+  button.go { background: #1f3a5f; color: #fff; border: none; padding: 6px 16px; border-radius: 4px; cursor: pointer; font-size: 13px; }
+  table { border-collapse: collapse; width: 100%; font-size: 13px; margin-top: 10px; }
+  th, td { border-bottom: 1px solid #eee; padding: 6px 8px; text-align: left; white-space: nowrap; }
+  th { background: #f8f9fa; position: sticky; top: 0; }
+  .muted { color: #888; font-size: 12px; }
+  .ok { color: #1a7f37; } .err { color: #c0392b; }
+  .tblwrap { max-height: 520px; overflow: auto; }
+</style>
+</head>
+<body>
+<header><h1>变异位点库</h1><span id="stats">加载中…</span></header>
+<nav>
+  <button data-p="samples" class="active">样本管理</button>
+  <button data-p="import">批次导入</button>
+  <button data-p="search">位点检索</button>
+  <button data-p="freq">频率统计</button>
+  <button data-p="qc">质控报告</button>
+</nav>
+<main>
+
+<div class="page active" id="p-samples">
+  <div class="card">
+    <label>样本名</label><input id="s-name" placeholder="模糊匹配">
+    <label>个体ID</label><input id="s-person">
+    <label>人群</label><select id="s-pop"><option value="">全部</option></select>
+    <button class="go" onclick="loadSamples()">查询</button>
+    <div class="tblwrap"><table id="s-table"></table></div>
+  </div>
+  <div class="card">
+    <b>重复送检识别</b> <span class="muted">(同 person_id 多次送样 + 基因型指纹完全一致的样本)</span>
+    <div id="dup-declared"></div>
+    <div id="dup-detected"></div>
+  </div>
+</div>
+
+<div class="page" id="p-import">
+  <div class="card">
+    <b>导入新批次</b><br><br>
+    <label>批次名</label><input id="i-name" placeholder="batch7">
+    <label>VCF目录</label><input id="i-dir" size="40" placeholder="/abs/path/to/vcfs">
+    <label>样本表CSV</label><input id="i-sheet" size="30" placeholder="name,person_id,population"><br><br>
+    <label>min QUAL</label><input id="i-qual" value="30" size="4">
+    <label>min DP</label><input id="i-dp" value="10" size="4">
+    <label>min GQ</label><input id="i-gq" value="20" size="4">
+    <button class="go" onclick="doImport()">导入</button>
+    <div id="i-result"></div>
+  </div>
+  <div class="card"><b>批次列表</b><div class="tblwrap"><table id="b-table"></table></div></div>
+</div>
+
+<div class="page" id="p-search">
+  <div class="card">
+    <label>染色体</label><input id="q-chrom" value="chr1" size="6">
+    <label>起</label><input id="q-start" size="8" placeholder="1">
+    <label>止</label><input id="q-end" size="8">
+    <label>或基因</label><input id="q-gene" size="8" placeholder="GENE3">
+    <label>样本</label><input id="q-sample" size="10">
+    <label>个体</label><input id="q-person" size="10">
+    <label>人群</label><select id="q-pop"><option value="">不限</option></select>
+    <button class="go" onclick="doSearch()">检索</button>
+    <button class="go" onclick="exportVcf()">导出VCF</button>
+    <span id="q-meta" class="muted"></span>
+    <div class="tblwrap"><table id="q-table"></table></div>
+  </div>
+</div>
+
+<div class="page" id="p-freq">
+  <div class="card">
+    <label>染色体</label><input id="f-chrom" value="chr1" size="6">
+    <label>起</label><input id="f-start" size="8">
+    <label>止</label><input id="f-end" size="8">
+    <label>或基因</label><input id="f-gene" size="8">
+    <button class="go" onclick="doFreq()">统计</button>
+    <span id="f-meta" class="muted"></span>
+    <div class="tblwrap"><table id="f-table"></table></div>
+  </div>
+</div>
+
+<div class="page" id="p-qc">
+  <div class="card">
+    <label>批次</label><select id="qc-batch"><option value="">全部</option></select>
+    <button class="go" onclick="loadQc()">查询</button>
+    <div id="qc-summary"></div>
+    <div class="tblwrap"><table id="qc-table"></table></div>
+  </div>
+</div>
+
+</main>
+<script>
+const $ = id => document.getElementById(id);
+async function jget(url){ const r = await fetch(url); return r.json(); }
+function tbl(el, heads, rows){
+  el.innerHTML = '<tr>'+heads.map(h=>`<th>${h}</th>`).join('')+'</tr>' +
+    rows.map(r=>'<tr>'+r.map(c=>`<td>${c??''}</td>`).join('')+'</tr>').join('');
+}
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active'); $('p-'+b.dataset.p).classList.add('active');
+  if(b.dataset.p==='import') loadBatches();
+  if(b.dataset.p==='qc') loadQc();
+  if(b.dataset.p==='samples'){ loadSamples(); loadDups(); }
+});
+
+async function refreshStats(){
+  const s = await jget('/api/stats');
+  $('stats').textContent = `位点 ${s.variants} | 样本 ${s.samples} | 基因型 ${s.genotypes} | 批次 ${s.batches} | 质控失败 ${s.qc_failures}`;
+}
+async function fillPops(){
+  const d = await jget('/api/samples');
+  for(const sel of ['s-pop','q-pop']){
+    d.populations.forEach(p=>{ const o=document.createElement('option'); o.textContent=p; $(sel).appendChild(o); });
+  }
+}
+async function loadSamples(){
+  const u = `/api/samples?sample=${encodeURIComponent($('s-name').value)}&person=${$('s-person').value}&population=${$('s-pop').value}`;
+  const d = await jget(u);
+  tbl($('s-table'), ['ID','样本','个体','人群','批次','检出数','携带位点数'],
+    d.samples.map(s=>[s.id,s.name,s.person_id,s.population,s.batch,s.n_called,s.n_carrier]));
+}
+async function loadDups(){
+  const d = await jget('/api/duplicates');
+  $('dup-declared').innerHTML = '<p><b>同人多次送样(person_id):</b> '+d.declared.length+' 组</p>'+
+    d.declared.slice(0,50).map(x=>`<div>${x.person_id}: ${x.samples} <span class="muted">(${x.n}个样本, ${x.populations})</span></div>`).join('');
+  $('dup-detected').innerHTML = '<p><b>基因型指纹一致(未声明的重复):</b> '+d.detected.length+' 组</p>'+
+    d.detected.slice(0,50).map(x=>`<div>${x.samples.join(' = ')} <span class="muted">person: ${x.persons.join(',')}</span></div>`).join('')+
+    '<p><b>携带谱高度相似(稀有变异重叠≥40%,疑似同人):</b> '+(d.similar||[]).length+' 对</p>'+
+    (d.similar||[]).slice(0,50).map(x=>`<div>${x.sample_a} ≈ ${x.sample_b} <span class="muted">共有${x.shared}个稀有变异, 重叠${(x.overlap*100).toFixed(1)}%, person: ${x.person_a}/${x.person_b}</span></div>`).join('');
+}
+async function loadBatches(){
+  const d = await jget('/api/batches');
+  tbl($('b-table'), ['ID','批次','时间','样本数','记录数','基因型数','质控失败','耗时ms','速度(记录/s)','状态'],
+    d.batches.map(b=>[b.id,b.name,b.created,b.n_samples,b.n_records,b.n_genotypes,b.n_qc_fail,
+      b.duration_ms, b.duration_ms?Math.round(b.n_records/(b.duration_ms/1000)):'', b.status]));
+  const sel = $('qc-batch'); sel.innerHTML='<option value="">全部</option>';
+  d.batches.forEach(b=>{ const o=document.createElement('option'); o.value=b.id; o.textContent=b.name; sel.appendChild(o); });
+}
+async function doImport(){
+  $('i-result').textContent = '导入中…';
+  const body = { name:$('i-name').value, vcf_dir:$('i-dir').value, sample_sheet:$('i-sheet').value,
+    min_qual:+$('i-qual').value, min_dp:+$('i-dp').value, min_gq:+$('i-gq').value };
+  const r = await fetch('/api/import',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  const d = await r.json();
+  $('i-result').innerHTML = d.ok
+    ? `<span class="ok">成功</span>: ${d.n_samples}样本 ${d.n_records}记录 ${d.n_new_variants}新位点 ${d.n_genotypes}基因型, 质控失败${d.n_qc_fail}, 耗时${d.duration_ms}ms (${d.records_per_sec}记录/s)`
+    : `<span class="err">失败(已回滚)</span>: ${d.error}`;
+  loadBatches(); refreshStats();
+}
+function filterParams(pfx){
+  const p = new URLSearchParams();
+  for(const k of ['chrom','start','end','gene','sample','person']){
+    const v = $(pfx+'-'+k)?.value; if(v) p.set(k,v);
+  }
+  const pop = $(pfx+'-pop')?.value; if(pop) p.set('population',pop);
+  return p;
+}
+async function doSearch(){
+  const p = filterParams('q');
+  const d = await jget('/api/variants?'+p);
+  if(d.error){ $('q-meta').textContent = d.error; return; }
+  $('q-meta').textContent = ` ${d.count} 个位点, 查询 ${d.query_ms.toFixed(1)}ms`;
+  tbl($('q-table'), ['染色体','位置','REF','ALT','AC','AN','AF'],
+    d.variants.map(v=>[v.chrom,v.pos,v.ref,v.alt,v.ac,v.an,v.af.toFixed(4)]));
+}
+function exportVcf(){
+  const p = filterParams('q'); p.set('limit','10000');
+  window.location = '/api/export.vcf?'+p;
+}
+async function doFreq(){
+  const p = filterParams('f');
+  const d = await jget('/api/frequencies?'+p);
+  if(d.error){ $('f-meta').textContent = d.error; return; }
+  $('f-meta').textContent = ` ${d.count} 个位点, 查询 ${d.query_ms.toFixed(1)}ms`;
+  const pops = [...new Set(d.variants.flatMap(v=>Object.keys(v.populations)))].sort();
+  tbl($('f-table'), ['染色体','位置','REF','ALT','总AF','AC/AN', ...pops],
+    d.variants.map(v=>[v.chrom,v.pos,v.ref,v.alt,v.af.toFixed(4),`${v.ac}/${v.an}`,
+      ...pops.map(p=>{const x=v.populations[p]; return x?x.af.toFixed(4)+` (${x.ac}/${x.an})`:'-';})]));
+}
+async function loadQc(){
+  const b = $('qc-batch').value;
+  const d = await jget('/api/qc'+(b?('?batch_id='+b):''));
+  $('qc-summary').innerHTML = '<p>'+d.summary.map(s=>`<b>${s.reason}</b>: ${s.count}`).join(' &nbsp; ')+'</p>';
+  tbl($('qc-table'), ['批次','样本','染色体','位置','REF','ALT','原因','详情'],
+    d.records.map(r=>[r.batch_id,r.sample,r.chrom,r.pos,r.ref,r.alt,r.reason,r.detail]));
+}
+refreshStats(); fillPops(); loadSamples(); loadDups();
+</script>
+</body>
+</html>

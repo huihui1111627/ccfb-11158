@@ -1,0 +1,1 @@
+/Users/shizhihui/ccfb/runs/11158/workspace/variantdb/target/release/variantdb: /Users/shizhihui/ccfb/runs/11158/workspace/variantdb/src/db.rs /Users/shizhihui/ccfb/runs/11158/workspace/variantdb/src/main.rs /Users/shizhihui/ccfb/runs/11158/workspace/variantdb/src/vcf.rs /Users/shizhihui/ccfb/runs/11158/workspace/variantdb/static/index.html

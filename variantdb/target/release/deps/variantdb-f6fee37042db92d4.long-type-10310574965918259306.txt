@@ -1,0 +1,1 @@
+fn(State<Arc<AppState>>, Query<HashMap<std::string::String, std::string::String>>) -> impl Future<Output = Json<serde_json::Value>> {api_bench}
